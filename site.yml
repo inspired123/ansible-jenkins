@@ -1,28 +1,19 @@
----
-- hosts: jenkins
-  connection: local
-  become: True
-
-  vars_files:
-    #- 'local_settings.yml'
-    - './vars/users.yaml'
-
-  roles:
-    - role: apt
-      tags: apt
-    - role: packages
-      tags: packages
-    - role: users
-      tags: users
-    - role: docker
-      tags: docker
-    - role: jenkins
-      tags: jenkins
-    - role: kubernetes
-      tags: kubernetes
-    - role: nginx
-      tags: nginx
-    - role: mail
-      tags: mail
-    - role: papertrail
-      tags: papertrail
+hosts: ansibleclient01.local
+  tasks:
+  - name: Install apache packages 
+    yum:
+      name: httpd
+      state: present
+  - name: ensure httpd is running
+    service:
+      name: httpd 
+      state: started
+  - name: Open port 80 for http access
+    firewalld:
+      service: http
+      permanent: true
+      state: enabled
+  - name: Restart the firewalld service to load in the firewall changes
+    service: 
+      name: firewalld 
+      state: restarted
